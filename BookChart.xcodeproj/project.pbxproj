@@ -8,13 +8,16 @@
 
 /* Begin PBXBuildFile section */
 		E339B6562152D8D800308CA2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E339B6552152D8D800308CA2 /* AppDelegate.swift */; };
-		E339B6582152D8D800308CA2 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E339B6572152D8D800308CA2 /* ViewController.swift */; };
 		E339B65B2152D8D800308CA2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E339B6592152D8D800308CA2 /* Main.storyboard */; };
 		E339B65E2152D8D800308CA2 /* BookChart.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = E339B65C2152D8D800308CA2 /* BookChart.xcdatamodeld */; };
 		E339B6602152D8DA00308CA2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E339B65F2152D8DA00308CA2 /* Assets.xcassets */; };
 		E339B6632152D8DA00308CA2 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E339B6612152D8DA00308CA2 /* LaunchScreen.storyboard */; };
 		E339B66E2152D8DA00308CA2 /* BookChartTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E339B66D2152D8DA00308CA2 /* BookChartTests.swift */; };
 		E339B6792152D8DA00308CA2 /* BookChartUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E339B6782152D8DA00308CA2 /* BookChartUITests.swift */; };
+		E339B6872152D93900308CA2 /* BookModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E339B6862152D93900308CA2 /* BookModel.swift */; };
+		E339B68921530D7400308CA2 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E339B68821530D7400308CA2 /* Extensions.swift */; };
+		E339B68B21531EBE00308CA2 /* SearchVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = E339B68A21531EBE00308CA2 /* SearchVC.swift */; };
+		E339B6912153276B00308CA2 /* BookCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E339B6902153276B00308CA2 /* BookCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -37,7 +40,6 @@
 /* Begin PBXFileReference section */
 		E339B6522152D8D800308CA2 /* BookChart.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BookChart.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E339B6552152D8D800308CA2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		E339B6572152D8D800308CA2 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		E339B65A2152D8D800308CA2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		E339B65D2152D8D800308CA2 /* BookChart.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = BookChart.xcdatamodel; sourceTree = "<group>"; };
 		E339B65F2152D8DA00308CA2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -49,6 +51,10 @@
 		E339B6742152D8DA00308CA2 /* BookChartUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BookChartUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E339B6782152D8DA00308CA2 /* BookChartUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookChartUITests.swift; sourceTree = "<group>"; };
 		E339B67A2152D8DA00308CA2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E339B6862152D93900308CA2 /* BookModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookModel.swift; sourceTree = "<group>"; };
+		E339B68821530D7400308CA2 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		E339B68A21531EBE00308CA2 /* SearchVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchVC.swift; sourceTree = "<group>"; };
+		E339B6902153276B00308CA2 /* BookCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,9 +105,12 @@
 		E339B6542152D8D800308CA2 /* BookChart */ = {
 			isa = PBXGroup;
 			children = (
-				E339B6552152D8D800308CA2 /* AppDelegate.swift */,
-				E339B6572152D8D800308CA2 /* ViewController.swift */,
 				E339B6592152D8D800308CA2 /* Main.storyboard */,
+				E339B6552152D8D800308CA2 /* AppDelegate.swift */,
+				E339B68F2153271F00308CA2 /* Views */,
+				E339B68C21531EC300308CA2 /* Controllers */,
+				E339B68E2153226700308CA2 /* Models */,
+				E339B68D2153225300308CA2 /* Helper */,
 				E339B65F2152D8DA00308CA2 /* Assets.xcassets */,
 				E339B6612152D8DA00308CA2 /* LaunchScreen.storyboard */,
 				E339B6642152D8DA00308CA2 /* Info.plist */,
@@ -126,6 +135,38 @@
 				E339B67A2152D8DA00308CA2 /* Info.plist */,
 			);
 			path = BookChartUITests;
+			sourceTree = "<group>";
+		};
+		E339B68C21531EC300308CA2 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				E339B68A21531EBE00308CA2 /* SearchVC.swift */,
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
+		E339B68D2153225300308CA2 /* Helper */ = {
+			isa = PBXGroup;
+			children = (
+				E339B68821530D7400308CA2 /* Extensions.swift */,
+			);
+			path = Helper;
+			sourceTree = "<group>";
+		};
+		E339B68E2153226700308CA2 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				E339B6862152D93900308CA2 /* BookModel.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		E339B68F2153271F00308CA2 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				E339B6902153276B00308CA2 /* BookCell.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -259,8 +300,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E339B6582152D8D800308CA2 /* ViewController.swift in Sources */,
+				E339B6912153276B00308CA2 /* BookCell.swift in Sources */,
+				E339B68B21531EBE00308CA2 /* SearchVC.swift in Sources */,
+				E339B68921530D7400308CA2 /* Extensions.swift in Sources */,
 				E339B65E2152D8D800308CA2 /* BookChart.xcdatamodeld in Sources */,
+				E339B6872152D93900308CA2 /* BookModel.swift in Sources */,
 				E339B6562152D8D800308CA2 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
