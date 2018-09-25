@@ -8,6 +8,10 @@
 
 import UIKit
 
+protocol SearchVCDelegate: class {
+    func searchResultDidGetSelected(result: Book)
+}
+
 class SearchVC: UIViewController {
     
     var searchOptions:[BookSearchQuery.KeywordOption] = [
@@ -15,33 +19,45 @@ class SearchVC: UIViewController {
     ]
     var tableData:[Book] = []
     
+    @IBOutlet weak var searchBar: UISearchBar!
+    
     @IBOutlet weak var tableView: UITableView!
     
-    @IBOutlet var keywordFields: [UITextField]!
+    var delegate:SearchVCDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        enableKeyboardDismissOnTap()
+//        enableKeyboardDismissOnTap()
         
         self.tableView.rowHeight = UITableView.automaticDimension;
         self.tableView.estimatedRowHeight = 44.0;
         tableView.dataSource = self
         tableView.delegate = self
+        searchBar.delegate = self
+        
+        var query = BookSearchQuery()
+        query.addBulkKeywords(["borges"], withOption: .inAuthor)
+        fetchVolumes(with: query)
+        
     }
     
-    @IBAction func searchButtonPressed(_ sender: UIButton) {
-        var query = BookSearchQuery()
-        
-        for keywordField in keywordFields {
-            guard let keywords = keywordField.text else { continue }
-            guard keywords.count != 0 else { continue }
-            let uniqueKeywordArr = Array(Set(keywords.components(separatedBy: " ")))
-
-            let option = searchOptions[keywordField.tag]
-            query.addBulkKeywords(uniqueKeywordArr, withOption: option)
-        }
-        fetchVolumes(with: query)
+    @IBAction func cancelPressed(_ sender: UIBarButtonItem) {
+        dismiss(animated: true, completion: nil)
     }
+    
+//    @IBAction func searchButtonPressed(_ sender: UIButton) {
+//        var query = BookSearchQuery()
+//
+//        for keywordField in keywordFields {
+//            guard let keywords = keywordField.text else { continue }
+//            guard keywords.count != 0 else { continue }
+//            let uniqueKeywordArr = Array(Set(keywords.components(separatedBy: " ")))
+//
+//            let option = searchOptions[keywordField.tag]
+//            query.addBulkKeywords(uniqueKeywordArr, withOption: option)
+//        }
+//        fetchVolumes(with: query)
+//    }
     
     func fetchVolumes(with query: BookSearchQuery) {
         BookModel.fetchVolumes(withSearchQuery: query, APIKey: GBookAPIKey) { json in
@@ -81,6 +97,31 @@ extension SearchVC: UITableViewDataSource, UITableViewDelegate {
         let cell = tableView.dequeueReusableCell(withIdentifier: "BookCell", for: indexPath) as! BookCell
         cell.displayData(forBook: tableData[indexPath.row])
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let book = tableData[indexPath.row]
+        delegate?.searchResultDidGetSelected(result: book)
+        view.endEditing(true)
+    }
+    
+}
+
+extension SearchVC: UISearchBarDelegate {
+    
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        searchBar.setShowsCancelButton(true, animated: true)
+    }
+    
+    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+        searchBar.setShowsCancelButton(false, animated: true)
+    }
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        guard let keywords = searchBar.text?.components(separatedBy: " ") else { return }
+        var query = BookSearchQuery()
+        query.addBulkKeywords(keywords, withOption: .general)
+        fetchVolumes(with: query)
     }
     
 }

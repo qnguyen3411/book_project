@@ -6,7 +6,7 @@
 //  Copyright © 2018 Quang Nguyen. All rights reserved.
 //
 
-let GBookAPIKey = "AIzaSyAg0gaUqEm2ss7z5N-z13WfynAI-otQtJc"
+let GBookAPIKey = ""
 
 import Foundation
 
