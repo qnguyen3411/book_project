@@ -18,6 +18,9 @@ protocol ChartElementDelegate {
 
 class ChartElement: UIView {
     
+    private static var idAutoIncrementer = 0
+    
+    var id: Int = 0
     var book: Book?
     var lastLocation:CGPoint = CGPoint(x: 0, y: 0)
     var links: [ChartLink] = []
@@ -45,6 +48,9 @@ class ChartElement: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         // Initialization code
+        ChartElement.idAutoIncrementer += 1
+        self.id = ChartElement.idAutoIncrementer
+        print("NEW ID: \(self.id)")
         let panRecognizer = UIPanGestureRecognizer(target:self, action:#selector(detectPan))
         let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(detectTap))
         self.gestureRecognizers = [panRecognizer, tapRecognizer]
@@ -60,6 +66,10 @@ class ChartElement: UIView {
         addConstraintsWithFormat("H:|[v0]|", views: coverImageView)
 
         
+    }
+    
+    static func setAutoIncrementer(to num: Int) {
+        idAutoIncrementer = num
     }
     
     func loadBook(_ book:Book) {

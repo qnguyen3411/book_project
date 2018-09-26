@@ -1,0 +1,6 @@
+framework module Pods_BookChart {
+  umbrella header "Pods-BookChart-umbrella.h"
+
+  export *
+  module * { export * }
+}

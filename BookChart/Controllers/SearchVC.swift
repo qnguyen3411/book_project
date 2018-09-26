@@ -64,18 +64,22 @@ class SearchVC: UIViewController {
             if let results = json["items"] as? [NSDictionary] {
                 self.tableData = []
                 
-                let volumes = results.map() { itemResult in
-                    return itemResult["volumeInfo"] as! NSDictionary
-                }
+//                let volumes = results.map() { itemResult in
+//                    return itemResult["volumeInfo"] as! NSDictionary
+//                }
                 
-                for volume in volumes {
-                    let book = Book()
-                    book.title = (volume["title"] as? String) ?? ""
-                    book.authors = (volume["authors"] as? [String]) ?? []
-                    
-                    guard let imageLinks = volume["imageLinks"] as? NSDictionary else { continue }
-                    guard let smallThumbnail = imageLinks["smallThumbnail"] as? String else { continue }
-                    book.thumbnailImageName = smallThumbnail.replacingOccurrences(of: "&edge=curl", with: "")
+                for item in results {
+                    guard let book = BookModel.getBookFromJson(item) else {
+                        print("CANT GET BOOK")
+                        continue
+                    }
+//                    let book = Book()
+//                    book.title = (volume["title"] as? String) ?? ""
+//                    book.authors = (volume["authors"] as? [String]) ?? []
+//
+//                    guard let imageLinks = volume["imageLinks"] as? NSDictionary else { continue }
+//                    guard let smallThumbnail = imageLinks["smallThumbnail"] as? String else { continue }
+//                    book.thumbnailImageName = smallThumbnail.replacingOccurrences(of: "&edge=curl", with: "")
                     self.tableData.append(book)
                 }
             }

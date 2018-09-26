@@ -392,7 +392,7 @@
                                     </navigationItem>
                                 </items>
                             </navigationBar>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6Q7-3W-ziM" customClass="TouchTrackingButton" customModule="charttest" customModuleProvider="target">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6Q7-3W-ziM" customClass="TouchTrackingButton" customModule="BookChart" customModuleProvider="target">
                                 <rect key="frame" x="-53" y="24" width="45" height="45"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="45" id="RpN-ZN-ryY"/>
