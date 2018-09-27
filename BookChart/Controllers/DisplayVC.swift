@@ -9,7 +9,7 @@
 import UIKit
 
 protocol DisplayVCDelegate: class {
-    func displayVC(_ displayController: DisplayVC, didSaveNewBook book: Book)
+    func displayVC(_ displayController: DisplayVC, didSaveNewBook book: BookModel)
 }
 
 class DisplayVC: UIViewController {
@@ -23,7 +23,7 @@ class DisplayVC: UIViewController {
     @IBOutlet weak var searchButton: UIButton!
     
     var delegate: DisplayVCDelegate?
-    var book: Book?
+    var book: BookModel?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -61,7 +61,7 @@ class DisplayVC: UIViewController {
 }
 
 extension DisplayVC: SearchVCDelegate {
-    func searchResultDidGetSelected(result: Book) {
+    func searchResultDidGetSelected(result: BookModel) {
         self.book = result
         renderData()
         delegate?.displayVC(self, didSaveNewBook: result)

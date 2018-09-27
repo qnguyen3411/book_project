@@ -51,11 +51,34 @@ class EditorVC: UIViewController {
     @IBAction func donePressed(_ sender: UIBarButtonItem) {
         let chart = saveToChartObject()
         do {
-            try ChartObject.saveToDB(chart)
+            try ChartObject.saveToDB(chart) {data, response, error in
+                if let response = response as? HTTPURLResponse {
+                    self.handleSaveSuccessStatus(response: response)
+                }
+//                self.dismiss(animated: true, completion: nil)
+            }
         } catch {
             print("ERROR TRYING TO POST TO SERVER")
         }
-        dismiss(animated: true, completion: nil)
+    }
+    
+    func handleSaveSuccessStatus(response: HTTPURLResponse) {
+        var alertTitle = ""
+        var message = ""
+        var action:(UIAlertAction) -> ()
+        switch response.statusCode {
+        case 200:
+            alertTitle = "Success!"
+            message = "Your chart is now saved!"
+            action = {alert in self.dismiss(animated: true, completion: nil)}
+        default:
+            alertTitle = "Error"
+            message = "Something went wrong on our side and your chart wasn't saved"
+            action = { alert in }
+        }
+        let alert = UIAlertController(title: alertTitle, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: action))
+        self.present(alert, animated: true, completion: nil)
     }
     
     func setUpScrollView() {
@@ -75,13 +98,12 @@ class EditorVC: UIViewController {
         }
     }
     
-    
     func link(_ elementA: ChartElementView, _ elementB: ChartElementView) {
         let newLink = ChartLink(srcView: elementA, destView: elementB)
         newLink.layer.zPosition = -1
         self.imageView.addSubview(newLink)
-        elementA.links.append(newLink)
-        elementB.links.append(newLink)
+        elementA.addLink(newLink)
+        elementB.addLink(newLink)
     }
     
     func handleLink(element: ChartElementView) {
@@ -96,6 +118,7 @@ class EditorVC: UIViewController {
             }
         }
     }
+    
 }
 
 extension EditorVC: UIScrollViewDelegate {
@@ -127,9 +150,9 @@ extension EditorVC: ChartElementDelegate {
     }
     
     func elementMenuDeleteButtonTapped(_ element: ChartElementView) {
-        element.dismissMenu()
-        element.removeConstraints(element.constraints)
-        element.removeFromSuperview()
+//        element.dismissMenu()
+//        element.removeConstraints(element.constraints)
+//        element.removeFromSuperview()
     }
     
 }
@@ -160,7 +183,7 @@ extension EditorVC: TouchTrackingButtonDelegate {
 
 extension EditorVC: DisplayVCDelegate {
     
-    func displayVC(_ displayController: DisplayVC, didSaveNewBook book: Book) {
+    func displayVC(_ displayController: DisplayVC, didSaveNewBook book: BookModel) {
         guard let element = elementBeingDisplayed else {
             print("NO ELEMENT BEING INSPECTED")
             return
@@ -172,26 +195,17 @@ extension EditorVC: DisplayVCDelegate {
 
 extension EditorVC {
     
-    func testRender() {
-        let chart = ChartObject()
-        let object1 = ChartElementObject(id: 12, chartId: 3, bookId: "QLrnuDJWY8cC", x: 100, y: 100)
-        let object2 = ChartElementObject(id: 13, chartId: 3, bookId: "8EMSAEfXzk0C", x: 400, y: 100)
-        let object3 = ChartElementObject(id: 14, chartId: 3, bookId: "68R9VS3WHPwC", x: 100, y: 400)
-        chart.elements = [object1, object2, object3]
-        chart.links = [LinkObject(13, 14), LinkObject(12, 14)]
-        chart.latestElementIdInDB = 24
-        renderChart(chart)
-    }
-    
     func renderChart(_ chart:ChartObject) {
-        ChartElementView.setAutoIncrementer(to: chart.latestElementIdInDB)
+        ChartElementView.setAutoIncrementer(to: chart.latestElementIdInDB )
         var elemDict: [Int:ChartElementView] = [:]
         for element in chart.elements {
-            BookModel.fetchVolume(id: element.bookId) { json in
-                guard let book = BookModel.getBookFromJson(json) else { return }
+            let urlStr = AppUrls.fetchSingleVolumeUrlStr(with: element.bookId)
+            ApiManager.shared.fetchData(fromUrlString: urlStr) { json in
+                guard let book = BookModel(data:json) else { return }
                 DispatchQueue.main.async {
                     let chartElement = ChartElementView()
                     chartElement.loadBook(book)
+                    chartElement.id = element.id
                     chartElement.delegate = self
                     chartElement.frame = CGRect(x: element.x, y: element.y, width: 100, height: 150)
                     self.imageView.addSubview(chartElement)
@@ -204,11 +218,12 @@ extension EditorVC {
                 }
             }
         }
+        ChartElementView.setAutoIncrementer(to: chart.latestElementIdInDB )
+
     }
     
     func saveToChartObject() -> ChartObject {
         let chart = ChartObject()
-        
         if let id = self.currChart?.id, let lastestElemId = self.currChart?.latestElementIdInDB {
             chart.id = id
             chart.latestElementIdInDB = lastestElemId
@@ -216,22 +231,14 @@ extension EditorVC {
         
         for subView in self.imageView.subviews {
             if let elementView = subView as? ChartElementView {
-                guard let bookId = elementView.book?.googleId else { continue }
-                let elem = ChartElementObject()
-                elem.id = elementView.id
-                elem.x = Double(elementView.frame.origin.x)
-                elem.y = Double(elementView.frame.origin.y)
-                elem.bookId = bookId
+                guard let elem = ChartElementObject(view: elementView) else { continue }
                 chart.elements.append(elem)
             }
             if let linkView = subView as? ChartLink {
-                guard let srcId = (linkView.srcView as? ChartElementView)?.id else { continue }
-                guard let destId = (linkView.destView as? ChartElementView)?.id else { continue }
-                let link = LinkObject(srcId, destId)
+                guard let link = LinkObject(view: linkView) else { continue }
                 chart.links.append(link)
             }
         }
-        
         return chart
     }
     

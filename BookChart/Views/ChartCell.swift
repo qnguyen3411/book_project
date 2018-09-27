@@ -10,12 +10,13 @@ import UIKit
 
 protocol ChartCellDelegate {
     func cellMainButtonPressed(_ cell: ChartCell)
+    func cellDeleteButtonPressed(_ cell: ChartCell)
 }
 
 
 class ChartCell: UITableViewCell {
 
-    var chart: ChartObject?
+    var indexPath: IndexPath?
     var delegate: ChartCellDelegate?
     
     @IBOutlet weak var chartView: UIImageView!
@@ -34,8 +35,17 @@ class ChartCell: UITableViewCell {
         // Configure the view for the selected state
     }
     
+    @IBAction func editPressed(_ sender: UIButton) {
+        print("EDIT PRESSED")
+    }
+    
+    @IBAction func deletePressed(_ sender: UIButton) {
+        print("DELETE PRESSED")
+        delegate?.cellDeleteButtonPressed(self)
+    }
+    
+    
     func loadChart(_ chart: ChartObject) {
-        self.chart = chart
         self.mainButton.setTitle("ID: \(chart.id)", for: .normal)
     }
     

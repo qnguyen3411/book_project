@@ -47,6 +47,10 @@ extension UIView {
         addConstraints(NSLayoutConstraint.constraints(withVisualFormat: format, options: NSLayoutConstraint.FormatOptions(),
                                                       metrics: nil, views: viewsDictionary))
     }
+    
+    func angleRelativeToSelf(of otherView: UIView) -> CGFloat{
+        return frame.angleRelativeToSelf(of: otherView.frame)
+    }
 }
 
 extension UIColor {
@@ -56,23 +60,52 @@ extension UIColor {
 }
 
 extension CGRect {
-    enum Edge {
-        case left
-        case top
-        case right
-        case bottom
+    
+    func angleRelativeToSelf(of otherRect: CGRect) -> CGFloat{
+        let srcCenter = self.center
+        let destCenter =  otherRect.center
+        
+        var angle = atan2(srcCenter.y - destCenter.y, destCenter.x - srcCenter.x) as CGFloat
+        angle += (angle < 0) ? 2 * CGFloat.pi : 0
+        return angle
     }
     
-    func getMidpoint(forEdge edge: Edge) -> CGPoint {
-        switch edge {
-        case .left:
-            return CGPoint(x: self.origin.x, y: self.origin.y + self.height / 2)
-        case .top:
-            return CGPoint(x: self.origin.x + self.width / 2, y: self.origin.y)
-        case .right:
-            return CGPoint(x: self.origin.x + self.width, y: self.origin.y + self.height / 2)
-        default:
-            return CGPoint(x: self.origin.x + self.width / 2, y: self.origin.y + self.height)
-        }
+    var center: CGPoint {
+        let centerX = origin.x + (size.width / 2)
+        let centerY = origin.y + (size.height / 2)
+        return CGPoint(x: centerX, y: centerY)
     }
+    
+    var topLeftCorner: CGPoint {
+        return origin
+    }
+    
+    var topRightCorner: CGPoint {
+        return CGPoint(x: origin.x + size.width, y: 0)
+    }
+    
+    var botRightCorner: CGPoint {
+        return CGPoint(x: origin.x + size.width, y: origin.y + size.height)
+    }
+    
+    var botLeftCorner: CGPoint {
+        return CGPoint(x: 0, y: origin.y + size.height)
+    }
+    
+    var leftEdgeMidpoint: CGPoint {
+        return CGPoint(x: self.origin.x, y: self.origin.y + self.height / 2)
+    }
+    
+    var rightEdgeMidpoint: CGPoint {
+        return CGPoint(x: self.origin.x + self.width, y: self.origin.y + self.height / 2)
+    }
+    
+    var topEdgeMidPoint: CGPoint {
+        return CGPoint(x: self.origin.x + self.width / 2, y: self.origin.y)
+    }
+    
+    var botEdgeMidPoint: CGPoint {
+        return CGPoint(x: self.origin.x + self.width / 2, y: self.origin.y + self.height)
+    }
+
 }

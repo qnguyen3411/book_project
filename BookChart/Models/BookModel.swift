@@ -6,69 +6,26 @@
 //  Copyright © 2018 Quang Nguyen. All rights reserved.
 //
 
-let GBookAPIKey = "AIzaSyAg0gaUqEm2ss7z5N-z13WfynAI-otQtJc"
-
 import Foundation
 
-class Book: NSObject {
+class BookModel {
+    
     var googleId: String = ""
     var title: String = ""
     var authors: [String] = []
     var thumbnailImageName: String = ""
     var publisher: String = ""
-}
-
-class BookModel {
     
-    static func fetchVolumes(withSearchQuery query: BookSearchQuery,  completionHandler: @escaping (NSDictionary) -> Void) {
-        let url = URL(string: "https://www.googleapis.com/books/v1/volumes?\(query.toString())&fields=totalItems,items(id,volumeInfo(title,authors,imageLinks(smallThumbnail)))&key=\(AppUrls.googleBookApiKey)")
-        
-        print("URLSTRING: \(String(describing: url?.absoluteString))")
-        
-        let task = URLSession.shared.dataTask(with: url!) { data, response, error in
-            do {
-                let json = try JSONSerialization.jsonObject(with: data!, options: .mutableContainers)
-                
-                if let json = json as? NSDictionary {
-                    completionHandler(json)
-                }
-            } catch let jsonError {
-                print("JSON ERROR: \(jsonError)")
-            }
-        }
-        task.resume()
-    }
+    init() {}
     
-    static func fetchVolume(id:String, completionHandler: @escaping (NSDictionary) -> Void) {
-        let url = URL(string: "https://www.googleapis.com/books/v1/volumes/\(id)")
-        let task = URLSession.shared.dataTask(with: url!) { data, response, error in
-            do {
-                let json = try JSONSerialization.jsonObject(with: data!, options: .mutableContainers)
-                
-                if let json = json as? NSDictionary {
-                    completionHandler(json)
-                }
-            } catch let jsonError {
-                print("JSON ERROR: \(jsonError)")
-            }
-        }
-        task.resume()
-    }
-    
-    static func getBookFromJson(_ json: NSDictionary) -> Book? {
-        let book = Book()
-        book.googleId = json["id"] as! String
-        let volume = json["volumeInfo"] as! NSDictionary
-        book.title = (volume["title"] as? String) ?? ""
-        book.authors = (volume["authors"] as? [String]) ?? []
-        guard let imageLinks = volume["imageLinks"] as? NSDictionary else {
-            return nil
-        }
-        guard let smallThumbnail = imageLinks["smallThumbnail"] as? String else {
-            return nil
-        }
-        book.thumbnailImageName = smallThumbnail.replacingOccurrences(of: "&edge=curl", with: "")
-        return book
+    init?(data:NSDictionary) {
+        self.googleId = data["id"] as! String
+        let volume = data["volumeInfo"] as! NSDictionary
+        self.title = (volume["title"] as? String) ?? ""
+        self.authors = (volume["authors"] as? [String]) ?? []
+        guard let imageLinks = volume["imageLinks"] as? NSDictionary else { return nil }
+        guard let smallThumbnail = imageLinks["smallThumbnail"] as? String else { return nil }
+        self.thumbnailImageName = smallThumbnail.replacingOccurrences(of: "&edge=curl", with: "")
     }
 
 }

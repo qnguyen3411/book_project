@@ -1,4 +1,7 @@
 PODS:
+  - Firebase/Core (3.17.0):
+    - FirebaseAnalytics (= 3.9.0)
+    - FirebaseCore (= 3.6.0)
   - FirebaseAnalytics (3.9.0):
     - FirebaseCore (~> 3.6)
     - FirebaseInstanceID (~> 1.0)
@@ -36,10 +39,12 @@ PODS:
     - GTMSessionFetcher/Core (= 1.2.0)
 
 DEPENDENCIES:
+  - Firebase/Core
   - Google/SignIn
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
+    - Firebase
     - FirebaseAnalytics
     - FirebaseCore
     - FirebaseInstanceID
@@ -50,6 +55,7 @@ SPEC REPOS:
     - GTMSessionFetcher
 
 SPEC CHECKSUMS:
+  Firebase: 4b66b5b59c43edac745b87f0c87e42cdd0279c13
   FirebaseAnalytics: e5fe8486efc01bec33f6bf82e2fa9fce4b124052
   FirebaseCore: 9691ee2ade70c098d7cf92440f4303f16d83ca75
   FirebaseInstanceID: b9eedd6846fb5e1f0f7279e1deaa7a7e4cf8392e
@@ -59,6 +65,6 @@ SPEC CHECKSUMS:
   GTMOAuth2: c77fe325e4acd453837e72d91e3b5f13116857b2
   GTMSessionFetcher: 0c4baf0a73acd0041bf9f71ea018deedab5ea84e
 
-PODFILE CHECKSUM: 714c93809632ff07cd006491ba03da58dca275f4
+PODFILE CHECKSUM: b60485230f53bec9e1e1dacb97220a1777dfa819
 
 COCOAPODS: 1.5.3

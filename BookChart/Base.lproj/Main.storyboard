@@ -64,7 +64,10 @@
                                                 <button clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HvK-hP-ZnJ">
                                                     <rect key="frame" x="345" y="270" width="30" height="43.5"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="29"/>
-                                                    <state key="normal" title="✎"/>
+                                                    <state key="normal" title="✕"/>
+                                                    <connections>
+                                                        <action selector="deletePressed:" destination="Rgw-q0-uWA" eventType="touchUpInside" id="PWZ-xZ-bCA"/>
+                                                    </connections>
                                                 </button>
                                                 <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HU1-b5-zlZ">
                                                     <rect key="frame" x="4" y="270" width="30" height="43.5"/>
@@ -91,15 +94,26 @@
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
+                                                <button clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1f2-ZB-rtA">
+                                                    <rect key="frame" x="307" y="270" width="30" height="43.5"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="29"/>
+                                                    <state key="normal" title="✐"/>
+                                                    <connections>
+                                                        <action selector="editPressed:" destination="Rgw-q0-uWA" eventType="touchUpInside" id="6CM-8Y-AY5"/>
+                                                    </connections>
+                                                </button>
                                             </subviews>
                                             <constraints>
                                                 <constraint firstItem="kRe-pF-DiR" firstAttribute="top" secondItem="a9A-uX-BeY" secondAttribute="top" id="1fD-v8-gVk"/>
                                                 <constraint firstItem="HvK-hP-ZnJ" firstAttribute="top" secondItem="a9A-uX-BeY" secondAttribute="bottom" id="9ig-39-8C8"/>
                                                 <constraint firstAttribute="bottom" secondItem="HvK-hP-ZnJ" secondAttribute="bottom" id="AlW-1C-cUh"/>
                                                 <constraint firstItem="HU1-b5-zlZ" firstAttribute="leading" secondItem="3DN-92-kMT" secondAttribute="leading" constant="4" id="Fa4-Gu-3Tg"/>
+                                                <constraint firstItem="1f2-ZB-rtA" firstAttribute="centerY" secondItem="HvK-hP-ZnJ" secondAttribute="centerY" id="J3f-r4-nTO"/>
+                                                <constraint firstItem="HvK-hP-ZnJ" firstAttribute="leading" secondItem="1f2-ZB-rtA" secondAttribute="trailing" constant="8" id="UKy-DQ-cGF"/>
                                                 <constraint firstAttribute="bottom" secondItem="HU1-b5-zlZ" secondAttribute="bottom" id="W0s-nt-Drg"/>
                                                 <constraint firstItem="kRe-pF-DiR" firstAttribute="leading" secondItem="a9A-uX-BeY" secondAttribute="leading" id="WlD-6k-lI7"/>
                                                 <constraint firstAttribute="trailing" secondItem="HvK-hP-ZnJ" secondAttribute="trailing" id="aSz-ui-evb"/>
+                                                <constraint firstItem="1f2-ZB-rtA" firstAttribute="height" secondItem="HvK-hP-ZnJ" secondAttribute="height" id="b4n-br-lY8"/>
                                                 <constraint firstItem="f3N-bA-028" firstAttribute="leading" secondItem="HU1-b5-zlZ" secondAttribute="trailing" constant="8" id="fcs-2a-tlN"/>
                                                 <constraint firstItem="f3N-bA-028" firstAttribute="bottom" secondItem="3DN-92-kMT" secondAttribute="bottomMargin" id="gsW-cy-BZi"/>
                                                 <constraint firstItem="a9A-uX-BeY" firstAttribute="leading" secondItem="3DN-92-kMT" secondAttribute="leading" id="m4S-Au-j5S"/>

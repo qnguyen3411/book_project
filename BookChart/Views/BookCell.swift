@@ -14,7 +14,7 @@ class BookCell: UITableViewCell {
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var authorLabel: UILabel!
     
-    func displayData(forBook book: Book) {
+    func displayData(forBook book: BookModel) {
         titleLabel.text = book.title
         authorLabel.text = book.authors.joined(separator: ", ")
         thumbnailImageView.render(fromUrlString: book.thumbnailImageName)

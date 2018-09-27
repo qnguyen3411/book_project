@@ -8,6 +8,26 @@
 // Given 2 UI view, ChartLink(view1, view2) will draw a line between them
 import UIKit
 
+class LinkManager {
+    var links:[ChartLink] = []
+    
+    func add(link: ChartLink) {
+        links.append(link)
+    }
+    
+    func clear() {
+        while !links.isEmpty {
+            let link = links.removeFirst()
+            link.removeFromSuperview()
+        }
+    }
+    
+    func updateAll() {
+        links.forEach { $0.updateLine() }
+    }
+}
+
+
 class ChartLink: UIView {
     
     var srcView: UIView?
@@ -34,12 +54,7 @@ class ChartLink: UIView {
     
     func updateLine() {
         guard let srcView = srcView, let destView = destView else { return }
-        let srcCenter = CGPoint(x: srcView.frame.origin.x + srcView.frame.width / 2, y: srcView.frame.origin.y + srcView.frame.height / 2)
-        let destCenter =  CGPoint(x: destView.frame.origin.x + destView.frame.width / 2, y:destView.frame.origin.y + destView.frame.height / 2)
-        let vector = CGVector(dx: destCenter.x - srcCenter.x, dy: srcCenter.y - destCenter.y)
-        
-        var angle = atan2(vector.dy, vector.dx) as CGFloat
-        angle += (angle < 0) ? 2 * CGFloat.pi : 0
+        let angle = srcView.angleRelativeToSelf(of: destView)
         let octant = Int(ceil(angle / (CGFloat.pi / 4))) % 8
         
         setFrame(srcView: srcView, destView: destView, octant: octant)
@@ -74,17 +89,17 @@ class ChartLink: UIView {
         var output = ["start": CGPoint.zero, "end": CGPoint.zero]
         switch octant {
         case 1, 0:
-            output["start"] = srcView.frame.getMidpoint(forEdge: .right)
-            output["end"] = destView.frame.getMidpoint(forEdge: .left)
+            output["start"] = srcView.frame.rightEdgeMidpoint
+            output["end"] = destView.frame.leftEdgeMidpoint
         case 2, 3:
-            output["start"] = srcView.frame.getMidpoint(forEdge: .top)
-            output["end"] = destView.frame.getMidpoint(forEdge: .bottom)
+            output["start"] = srcView.frame.topEdgeMidPoint
+            output["end"] = destView.frame.botEdgeMidPoint
         case 4, 5:
-            output["start"] = srcView.frame.getMidpoint(forEdge: .left)
-            output["end"] = destView.frame.getMidpoint(forEdge: .right)
+            output["start"] = srcView.frame.leftEdgeMidpoint
+            output["end"] = destView.frame.rightEdgeMidpoint
         default:
-            output["start"] = srcView.frame.getMidpoint(forEdge: .bottom)
-            output["end"] = destView.frame.getMidpoint(forEdge: .top)
+            output["start"] = srcView.frame.botEdgeMidPoint
+            output["end"] = destView.frame.topEdgeMidPoint
         }
         return output
     }
@@ -92,13 +107,13 @@ class ChartLink: UIView {
     func drawLink(octant: Int) {
         switch octant {
         case 1, 5:
-            lineView.updateConstraintSet(option: .botLeftRightToTopRight)
+            lineView.updateConstraintSet(option: .rightUpRight)
         case 2, 6:
-            lineView.updateConstraintSet(option: .botLeftUpToTopRight)
+            lineView.updateConstraintSet(option: .upRightUp)
         case 3, 7:
-            lineView.updateConstraintSet(option: .botRightUpToTopLeft)
+            lineView.updateConstraintSet(option: .upLeftUp)
         default:
-            lineView.updateConstraintSet(option: .topLeftRightToBotRight)
+            lineView.updateConstraintSet(option: .rightDownRight)
         }
     }
     
@@ -107,21 +122,25 @@ class ChartLink: UIView {
         removeFromSuperview()
     }
     
+    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
+
 }
 
 
 class ZigzagLine: UIView {
     
     enum ConstraintSetOption {
-        case botLeftUpToTopRight
-        case botLeftRightToTopRight
-        case botRightUpToTopLeft
-        case topLeftRightToBotRight
+        case upRightUp
+        case rightUpRight
+        case upLeftUp
+        case rightDownRight
     }
+    
+    var lineWidth:CGFloat = 5
     
     let leftLine: UIView = {
         let view = UIView()
@@ -152,10 +171,10 @@ class ZigzagLine: UIView {
         return btn
     }()
     
-    var botLeftUpToTopRightConstraints:[NSLayoutConstraint] = []
-    var botLeftRightToTopRightConstraints:[NSLayoutConstraint] = []
-    var botRightUpToTopLeftConstraints:[NSLayoutConstraint] = []
-    var topLeftRightToBotRightConstraints:[NSLayoutConstraint] = []
+    var upRightUpConstraints:[NSLayoutConstraint] = []
+    var rightUpRightConstraints:[NSLayoutConstraint] = []
+    var upLeftUpConstraints:[NSLayoutConstraint] = []
+    var rightDownRightConstraints:[NSLayoutConstraint] = []
     
     override init(frame:CGRect) {
         super.init(frame: frame)
@@ -165,7 +184,13 @@ class ZigzagLine: UIView {
         addSubview(button)
         
         setUpConstraintSets()
-        updateConstraintSet(option: .botLeftUpToTopRight)
+        updateConstraintSet(option: .upRightUp)
+    }
+    
+    convenience init(frame:CGRect, lineWidth: CGFloat) {
+        self.init(frame: frame)
+        self.lineWidth = lineWidth
+        
     }
     
     func setUpConstraintSets() {
@@ -181,73 +206,73 @@ class ZigzagLine: UIView {
             midLine.centerYAnchor.constraint(equalTo: self.centerYAnchor),
         ])
         
-        botLeftUpToTopRightConstraints = [
+        upRightUpConstraints = [
             leftLine.bottomAnchor.constraint(equalTo: self.bottomAnchor),
-            leftLine.widthAnchor.constraint(equalToConstant: 5),
+            leftLine.widthAnchor.constraint(equalToConstant: lineWidth),
             leftLine.topAnchor.constraint(equalTo: self.centerYAnchor),
-            midLine.heightAnchor.constraint(equalToConstant: 5),
+            midLine.heightAnchor.constraint(equalToConstant: lineWidth),
             midLine.leadingAnchor.constraint(equalTo: self.leadingAnchor),
             midLine.trailingAnchor.constraint(equalTo: self.trailingAnchor),
             rightLine.topAnchor.constraint(equalTo: self.topAnchor),
             rightLine.bottomAnchor.constraint(equalTo: self.centerYAnchor),
-            rightLine.widthAnchor.constraint(equalToConstant: 5),
+            rightLine.widthAnchor.constraint(equalToConstant: lineWidth),
         ]
         
-        botLeftRightToTopRightConstraints = [
+        rightUpRightConstraints = [
             leftLine.trailingAnchor.constraint(equalTo: self.centerXAnchor),
-            leftLine.heightAnchor.constraint(equalToConstant: 5),
+            leftLine.heightAnchor.constraint(equalToConstant: lineWidth),
             leftLine.bottomAnchor.constraint(equalTo: self.bottomAnchor),
             midLine.bottomAnchor.constraint(equalTo: self.bottomAnchor),
             midLine.topAnchor.constraint(equalTo: self.topAnchor),
-            midLine.widthAnchor.constraint(equalToConstant: 5),
+            midLine.widthAnchor.constraint(equalToConstant: lineWidth),
             rightLine.topAnchor.constraint(equalTo: self.topAnchor),
             rightLine.leadingAnchor.constraint(equalTo: self.centerXAnchor),
-            rightLine.heightAnchor.constraint(equalToConstant: 5),
+            rightLine.heightAnchor.constraint(equalToConstant: lineWidth),
         ]
         
-        botRightUpToTopLeftConstraints = [
+        upLeftUpConstraints = [
             leftLine.topAnchor.constraint(equalTo: self.topAnchor),
             leftLine.bottomAnchor.constraint(equalTo: self.centerYAnchor),
-            leftLine.widthAnchor.constraint(equalToConstant: 5),
-            midLine.heightAnchor.constraint(equalToConstant: 5),
+            leftLine.widthAnchor.constraint(equalToConstant: lineWidth),
+            midLine.heightAnchor.constraint(equalToConstant: lineWidth),
             midLine.leadingAnchor.constraint(equalTo: self.leadingAnchor),
             midLine.trailingAnchor.constraint(equalTo: self.trailingAnchor),
             rightLine.topAnchor.constraint(equalTo: self.centerYAnchor),
             rightLine.bottomAnchor.constraint(equalTo: self.bottomAnchor),
-            rightLine.widthAnchor.constraint(equalToConstant: 5)
+            rightLine.widthAnchor.constraint(equalToConstant: lineWidth)
         ]
         
-        topLeftRightToBotRightConstraints = [
+        rightDownRightConstraints = [
             leftLine.topAnchor.constraint(equalTo: self.topAnchor),
-            leftLine.heightAnchor.constraint(equalToConstant: 5),
+            leftLine.heightAnchor.constraint(equalToConstant: lineWidth),
             leftLine.trailingAnchor.constraint(equalTo: self.centerXAnchor),
             midLine.bottomAnchor.constraint(equalTo: self.bottomAnchor),
             midLine.topAnchor.constraint(equalTo: self.topAnchor),
-            midLine.widthAnchor.constraint(equalToConstant: 5),
+            midLine.widthAnchor.constraint(equalToConstant: lineWidth),
             rightLine.leadingAnchor.constraint(equalTo: self.centerXAnchor),
             rightLine.bottomAnchor.constraint(equalTo: self.bottomAnchor),
-            rightLine.heightAnchor.constraint(equalToConstant: 5)
+            rightLine.heightAnchor.constraint(equalToConstant: lineWidth)
         ]
     }
     
     func updateConstraintSet(option: ConstraintSetOption) {
         // reset constraints
         NSLayoutConstraint.deactivate(
-            botLeftUpToTopRightConstraints
-            + botLeftRightToTopRightConstraints
-            + botRightUpToTopLeftConstraints
-            + topLeftRightToBotRightConstraints
+            upRightUpConstraints
+            + rightUpRightConstraints
+            + upLeftUpConstraints
+            + rightDownRightConstraints
         )
         
         switch option {
-        case .botLeftRightToTopRight:
-            NSLayoutConstraint.activate(botLeftRightToTopRightConstraints)
-        case .botLeftUpToTopRight:
-            NSLayoutConstraint.activate(botLeftUpToTopRightConstraints)
-        case .botRightUpToTopLeft:
-            NSLayoutConstraint.activate(botRightUpToTopLeftConstraints)
+        case .rightUpRight:
+            NSLayoutConstraint.activate(rightUpRightConstraints)
+        case .upRightUp:
+            NSLayoutConstraint.activate(upRightUpConstraints)
+        case .upLeftUp:
+            NSLayoutConstraint.activate(upLeftUpConstraints)
         default:
-            NSLayoutConstraint.activate(topLeftRightToBotRightConstraints)
+            NSLayoutConstraint.activate(rightDownRightConstraints)
         }
     }
     

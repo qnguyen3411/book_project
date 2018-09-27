@@ -21,9 +21,9 @@ class ChartElementView: UIView {
     static var autoIncrementer = 0
     
     var id = 0
-    var book: Book?
+    var book: BookModel?
     var lastLocation:CGPoint = CGPoint(x: 0, y: 0)
-    var links: [ChartLink] = []
+    let linkManager = LinkManager()
     var delegate: ChartElementDelegate?
     
     let defaultEmptyView: UIView = {
@@ -46,6 +46,9 @@ class ChartElementView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         // Initialization code
+        ChartElementView.autoIncrementer += 1
+        self.id = ChartElementView.autoIncrementer
+        print("MAKING CHART ID: \(self.id)")
         let panRecognizer = UIPanGestureRecognizer(target:self, action:#selector(detectPan))
         let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(detectTap))
         self.gestureRecognizers = [panRecognizer, tapRecognizer]
@@ -61,11 +64,15 @@ class ChartElementView: UIView {
         addConstraintsWithFormat("H:|[v0]|", views: coverImageView)
     }
     
+    func addLink(_ link: ChartLink) {
+        linkManager.add(link: link)
+    }
+    
     static func setAutoIncrementer(to num: Int) {
         autoIncrementer = num
     }
     
-    func loadBook(_ book:Book) {
+    func loadBook(_ book:BookModel) {
         coverImageView.render(fromUrlString: book.thumbnailImageName)
         self.book = book
     }
@@ -78,9 +85,7 @@ class ChartElementView: UIView {
         let translation  = recognizer.location(in: self.superview)
         self.center = CGPoint(x: translation.x,y: translation.y)
         
-        for link in links {
-            link.updateLine()
-        }
+        linkManager.updateAll()
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -100,17 +105,14 @@ class ChartElementView: UIView {
     
     override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
         if clipsToBounds || isHidden {
-            print("NOPE")
             return nil
         }
-        
         for subview in subviews.reversed() {
             let subPoint = subview.convert(point, from: self)
             if let result = subview.hitTest(subPoint, with: event) {
                 return result
             }
         }
-        
         return nil
     }
     
@@ -119,6 +121,11 @@ class ChartElementView: UIView {
     }
     
     @objc func menuDeleteButtonTapped() {
+        dismissMenu()
+        linkManager.clear()
+        removeConstraints(constraints)
+        removeFromSuperview()
+
         delegate?.elementMenuDeleteButtonTapped(self)
     }
     

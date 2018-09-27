@@ -45,9 +45,8 @@ class ChartObject: Codable {
         return data
     }
     
-    static func saveToDB(_ chart:ChartObject) throws {
+    static func saveToDB(_ chart:ChartObject, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) throws {
         let urlToRequest = (chart.id == 0) ? AppUrls.createChartUrlStr : AppUrls.updateChartUrlStr
-        print("URL TO REQUEST: \(urlToRequest)")
         let url = URL(string: urlToRequest)!
         let session = URLSession.shared
         var request = URLRequest(url: url)
@@ -55,26 +54,19 @@ class ChartObject: Codable {
         request.httpBody = try chart.toJson()
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.addValue("application/json", forHTTPHeaderField: "Accept")
-        let task = session.dataTask(with: request)
+        let task = session.dataTask(with: request, completionHandler: completionHandler)
         task.resume()
     }
     
-    static func fetchAll(completionHandler: @escaping (NSDictionary) -> Void) {
-        let url = URL(string: AppUrls.fetchChartUrlStr)
-        let task = URLSession.shared.dataTask(with: url!) { data, response, error in
-            do {
-                let json = try JSONSerialization.jsonObject(with: data!, options: .mutableContainers)
-                
-                if let json = json as? NSDictionary {
-                    completionHandler(json)
-                }
-            } catch let jsonError {
-                print("JSON ERROR: \(jsonError)")
-            }
-        }
+    static func deleteFromDB(_ chart: ChartObject, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) throws {
+        let url = URL(string: AppUrls.deleteChartUrlStr)
+        var request = URLRequest(url: url!)
+        request.httpMethod = "POST"
+        let postString = "id=\(chart.id)"
+        request.httpBody = postString.data(using: .utf8)
+        let task = URLSession.shared.dataTask(with: request, completionHandler: completionHandler)
         task.resume()
     }
-    
 }
 
 class ChartElementObject: Codable {
@@ -98,7 +90,6 @@ class ChartElementObject: Codable {
     }
     
     init?(data: NSDictionary) {
-        print(data)
         guard let bookId = data["bookId"] as? String,
             let id = data["id"] as? Int,
             let x = data["x"] as? Double,
@@ -110,6 +101,14 @@ class ChartElementObject: Codable {
         self.bookId = bookId
         self.x = x
         self.y = y
+    }
+    
+    init?(view: ChartElementView) {
+        guard let bookId = view.book?.googleId else { return nil }
+        self.id = view.id
+        self.x = Double(view.frame.origin.x)
+        self.y = Double(view.frame.origin.y)
+        self.bookId = bookId
     }
     
 }
@@ -127,6 +126,14 @@ class LinkObject: Codable {
         guard idPair.count == 2 else { return nil }
         self.srcId = idPair[0]
         self.destId = idPair[1]
+    }
+    
+    init?(view: ChartLink) {
+        guard let srcId = (view.srcView as? ChartElementView)?.id else { return nil }
+        guard let destId = (view.destView as? ChartElementView)?.id else { return nil }
+        self.srcId = srcId
+        self.destId = destId
+
     }
 }
 

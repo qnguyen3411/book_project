@@ -9,7 +9,7 @@
 import UIKit
 
 protocol SearchVCDelegate: class {
-    func searchResultDidGetSelected(result: Book)
+    func searchResultDidGetSelected(result: BookModel)
 }
 
 class SearchVC: UIViewController {
@@ -17,7 +17,7 @@ class SearchVC: UIViewController {
     var searchOptions:[BookSearchQuery.KeywordOption] = [
         .general, .inTitle, .inAuthor, .inPublisher, .subject, .isbn
     ]
-    var tableData:[Book] = []
+    var tableData:[BookModel] = []
     
     @IBOutlet weak var searchBar: UISearchBar!
     
@@ -46,15 +46,13 @@ class SearchVC: UIViewController {
     }
     
     func fetchVolumes(with query: BookSearchQuery) {
-        BookModel.fetchVolumes(withSearchQuery: query) { json in
+        let urlStr = AppUrls.fetchVolumesUrlStr(with: query)
+        ApiManager.shared.fetchData(fromUrlString: urlStr) { json in
             if let results = json["items"] as? [NSDictionary] {
                 self.tableData = []
                 
-                for item in results {
-                    guard let book = BookModel.getBookFromJson(item) else {
-                        print("CANT GET BOOK")
-                        continue
-                    }
+                for data in results {
+                    guard let book = BookModel(data:data) else { continue }
                     self.tableData.append(book)
                 }
             }
