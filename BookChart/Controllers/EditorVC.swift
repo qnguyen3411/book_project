@@ -17,21 +17,27 @@ class EditorVC: UIViewController {
     @IBOutlet weak var addButton: TouchTrackingButton!
 
     var currTool = ""
-    var elementBeingDisplayed: ChartElement?
-    var elementBeingDragged: ChartElement?
-    var elementPairToJoin: [ChartElement] = []
+    var elementBeingDisplayed: ChartElementView?
+    var elementBeingDragged: ChartElementView?
+    var elementPairToJoin: [ChartElementView] = []
     
     var currChart: ChartObject?
     var autoIncrementer: Int = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        testRender()
         setUpScrollView()
         imageView.isExclusiveTouch = false
         imageView.isUserInteractionEnabled = true
         
         addButton.delegate = self
+        
+        if let chart = currChart {
+            print("RENDERING \(chart)")
+            renderChart(chart)
+        } else {
+            print("NO CHART")
+        }
     }
     
     @IBAction func linkButtonPressed(_ sender: UIButton) {
@@ -44,11 +50,12 @@ class EditorVC: UIViewController {
     
     @IBAction func donePressed(_ sender: UIBarButtonItem) {
         let chart = saveToChartObject()
-        print("CHART: \(chart)")
-        print("CHART ELEMENTS: \(chart.elements)")
-        print("CHART LINKS: \(chart.links)")
-        chart.toJson()
-//        dismiss(animated: true, completion: nil)
+        do {
+            try ChartObject.saveToDB(chart)
+        } catch {
+            print("ERROR TRYING TO POST TO SERVER")
+        }
+        dismiss(animated: true, completion: nil)
     }
     
     func setUpScrollView() {
@@ -63,13 +70,13 @@ class EditorVC: UIViewController {
         let dest = nav.topViewController as! DisplayVC
         dest.delegate = self
         
-        if let element = sender as? ChartElement {
+        if let element = sender as? ChartElementView {
             dest.book = element.book
         }
     }
     
     
-    func link(_ elementA: ChartElement, _ elementB: ChartElement) {
+    func link(_ elementA: ChartElementView, _ elementB: ChartElementView) {
         let newLink = ChartLink(srcView: elementA, destView: elementB)
         newLink.layer.zPosition = -1
         self.imageView.addSubview(newLink)
@@ -77,7 +84,7 @@ class EditorVC: UIViewController {
         elementB.links.append(newLink)
     }
     
-    func handleLink(element: ChartElement) {
+    func handleLink(element: ChartElementView) {
         elementPairToJoin.append(element)
         if elementPairToJoin.count == 2 {
             if elementPairToJoin[0] !== elementPairToJoin[1] {
@@ -100,22 +107,26 @@ extension EditorVC: UIScrollViewDelegate {
 
 extension EditorVC: ChartElementDelegate {
     
-    func elementTapped(_ element: ChartElement) {
+    func elementTapped(_ element: ChartElementView) {
         if currTool == "link" {
             handleLink(element: element)
         } else {
-            print("Should present menu above element")
+            for subview in self.imageView.subviews {
+                if let chartElem = subview as? ChartElementView {
+                    chartElem.dismissMenu()
+                }
+            }
             element.toggleMenu()
         }
     }
     
-    func elementMenuAddButtonTapped(_ element: ChartElement) {
+    func elementMenuAddButtonTapped(_ element: ChartElementView) {
         element.dismissMenu()
         elementBeingDisplayed = element
         performSegue(withIdentifier: "EditorToDisplay", sender: element)
     }
     
-    func elementMenuDeleteButtonTapped(_ element: ChartElement) {
+    func elementMenuDeleteButtonTapped(_ element: ChartElementView) {
         element.dismissMenu()
         element.removeConstraints(element.constraints)
         element.removeFromSuperview()
@@ -128,7 +139,7 @@ extension EditorVC: TouchTrackingButtonDelegate {
     func buttonTouched(with touch: UITouch) {
         let location = touch.location(in: imageView)
         let origin = CGPoint(x: location.x + 50, y: location.y + 50)
-        let element = ChartElement(frame: CGRect(origin: origin, size: CGSize(width: 100, height: 150)))
+        let element = ChartElementView(frame: CGRect(origin: origin, size: CGSize(width: 100, height: 150)))
         element.delegate = self
         elementBeingDragged = element
         self.imageView.addSubview(element)
@@ -163,27 +174,23 @@ extension EditorVC {
     
     func testRender() {
         let chart = ChartObject()
-//        var elemDict: [Int:ChartElement] = [:]
         let object1 = ChartElementObject(id: 12, chartId: 3, bookId: "QLrnuDJWY8cC", x: 100, y: 100)
         let object2 = ChartElementObject(id: 13, chartId: 3, bookId: "8EMSAEfXzk0C", x: 400, y: 100)
         let object3 = ChartElementObject(id: 14, chartId: 3, bookId: "68R9VS3WHPwC", x: 100, y: 400)
         chart.elements = [object1, object2, object3]
         chart.links = [LinkObject(13, 14), LinkObject(12, 14)]
-        chart.lastestElementIdInDB = 24
+        chart.latestElementIdInDB = 24
         renderChart(chart)
-//        ChartElement.setAutoIncrementer(to: 6)
-        
     }
     
     func renderChart(_ chart:ChartObject) {
-        ChartElement.setAutoIncrementer(to: chart.lastestElementIdInDB)
-        var elemDict: [Int:ChartElement] = [:]
-
+        ChartElementView.setAutoIncrementer(to: chart.latestElementIdInDB)
+        var elemDict: [Int:ChartElementView] = [:]
         for element in chart.elements {
-            BookModel.fetchVolume(id: element.bookId, APIKey: GBookAPIKey) { json in
+            BookModel.fetchVolume(id: element.bookId) { json in
                 guard let book = BookModel.getBookFromJson(json) else { return }
                 DispatchQueue.main.async {
-                    let chartElement = ChartElement()
+                    let chartElement = ChartElementView()
                     chartElement.loadBook(book)
                     chartElement.delegate = self
                     chartElement.frame = CGRect(x: element.x, y: element.y, width: 100, height: 150)
@@ -202,13 +209,13 @@ extension EditorVC {
     func saveToChartObject() -> ChartObject {
         let chart = ChartObject()
         
-        if let id = self.currChart?.id, let lastestElemId = self.currChart?.lastestElementIdInDB {
+        if let id = self.currChart?.id, let lastestElemId = self.currChart?.latestElementIdInDB {
             chart.id = id
-            chart.lastestElementIdInDB = lastestElemId
+            chart.latestElementIdInDB = lastestElemId
         }
         
         for subView in self.imageView.subviews {
-            if let elementView = subView as? ChartElement {
+            if let elementView = subView as? ChartElementView {
                 guard let bookId = elementView.book?.googleId else { continue }
                 let elem = ChartElementObject()
                 elem.id = elementView.id
@@ -218,8 +225,8 @@ extension EditorVC {
                 chart.elements.append(elem)
             }
             if let linkView = subView as? ChartLink {
-                guard let srcId = (linkView.srcView as? ChartElement)?.id else { continue }
-                guard let destId = (linkView.destView as? ChartElement)?.id else { continue }
+                guard let srcId = (linkView.srcView as? ChartElementView)?.id else { continue }
+                guard let destId = (linkView.destView as? ChartElementView)?.id else { continue }
                 let link = LinkObject(srcId, destId)
                 chart.links.append(link)
             }

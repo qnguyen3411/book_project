@@ -8,10 +8,20 @@
 
 import UIKit
 
+protocol ChartCellDelegate {
+    func cellMainButtonPressed(_ cell: ChartCell)
+}
+
+
 class ChartCell: UITableViewCell {
 
+    var chart: ChartObject?
+    var delegate: ChartCellDelegate?
     
     @IBOutlet weak var chartView: UIImageView!
+    
+    @IBOutlet weak var mainButton: UIButton!
+    
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -23,5 +33,16 @@ class ChartCell: UITableViewCell {
 
         // Configure the view for the selected state
     }
+    
+    func loadChart(_ chart: ChartObject) {
+        self.chart = chart
+        self.mainButton.setTitle("ID: \(chart.id)", for: .normal)
+    }
+    
+    @IBAction func mainButtonPressed(_ sender: UIButton) {
+        print("PRESSED")
+        delegate?.cellMainButtonPressed(self)
+    }
+    
 
 }

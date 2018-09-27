@@ -1,8 +1,8 @@
 //
-//  ChartElement.swift
-//  charttest
+//  ChartElementView.swift
+//  BookChart
 //
-//  Created by Quang Nguyen on 9/22/18.
+//  Created by Quang Nguyen on 9/26/18.
 //  Copyright © 2018 Quang Nguyen. All rights reserved.
 //
 import UIKit
@@ -18,9 +18,9 @@ protocol ChartElementDelegate {
 
 class ChartElementView: UIView {
     
-    private static var idAutoIncrementer = 0
+    static var autoIncrementer = 0
     
-    var id: Int = 0
+    var id = 0
     var book: Book?
     var lastLocation:CGPoint = CGPoint(x: 0, y: 0)
     var links: [ChartLink] = []
@@ -39,18 +39,13 @@ class ChartElementView: UIView {
     }()
     
     let elementOptionMenu: ElementOptionMenu = {
-        let menu = ElementOptionMenu(frame: CGRect(origin: CGPoint(x: 20, y: -50), size: CGSize(width: 100, height: 50)))
-//        menu.translatesAutoresizingMaskIntoConstraints = false
-        
+        let menu = ElementOptionMenu(frame: CGRect(x: 20, y: -50, width: 100, height: 50))
         return menu
     }()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         // Initialization code
-        ChartElementView.idAutoIncrementer += 1
-        self.id = ChartElementView.idAutoIncrementer
-        print("NEW ID: \(self.id)")
         let panRecognizer = UIPanGestureRecognizer(target:self, action:#selector(detectPan))
         let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(detectTap))
         self.gestureRecognizers = [panRecognizer, tapRecognizer]
@@ -64,12 +59,10 @@ class ChartElementView: UIView {
         defaultEmptyView.addSubview(coverImageView)
         addConstraintsWithFormat("V:|[v0]|", views: coverImageView)
         addConstraintsWithFormat("H:|[v0]|", views: coverImageView)
-
-        
     }
     
     static func setAutoIncrementer(to num: Int) {
-        idAutoIncrementer = num
+        autoIncrementer = num
     }
     
     func loadBook(_ book:Book) {
@@ -101,7 +94,6 @@ class ChartElementView: UIView {
     func setUpMenu() {
         addSubview(elementOptionMenu)
         elementOptionMenu.isHidden = true
-        
         elementOptionMenu.addButton.addTarget(self, action: #selector(menuAddButtonTapped), for: .touchUpInside)
         elementOptionMenu.deleteButton.addTarget(self, action: #selector(menuDeleteButtonTapped), for: .touchUpInside)
     }
@@ -155,7 +147,7 @@ class ChartElementView: UIView {
         
         let dashes: [CGFloat] = [itemLength, itemLength]
         path.setLineDash(dashes, count: dashes.count, phase: 0)
-                UIColor.lightGray.setStroke()
+        UIColor.lightGray.setStroke()
         path.stroke()
         
     }

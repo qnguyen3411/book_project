@@ -81,6 +81,9 @@
                                                     <state key="normal" title="  Title">
                                                         <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     </state>
+                                                    <connections>
+                                                        <action selector="mainButtonPressed:" destination="Rgw-q0-uWA" eventType="touchUpInside" id="Vq8-qX-iuu"/>
+                                                    </connections>
                                                 </button>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="12" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="f3N-bA-028">
                                                     <rect key="frame" x="42" y="278" width="18" height="25"/>
@@ -110,6 +113,7 @@
                                         </tableViewCellContentView>
                                         <connections>
                                             <outlet property="chartView" destination="a9A-uX-BeY" id="eBU-M7-jKn"/>
+                                            <outlet property="mainButton" destination="kRe-pF-DiR" id="5rJ-cb-GIN"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>

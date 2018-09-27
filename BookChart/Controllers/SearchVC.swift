@@ -45,41 +45,16 @@ class SearchVC: UIViewController {
         dismiss(animated: true, completion: nil)
     }
     
-//    @IBAction func searchButtonPressed(_ sender: UIButton) {
-//        var query = BookSearchQuery()
-//
-//        for keywordField in keywordFields {
-//            guard let keywords = keywordField.text else { continue }
-//            guard keywords.count != 0 else { continue }
-//            let uniqueKeywordArr = Array(Set(keywords.components(separatedBy: " ")))
-//
-//            let option = searchOptions[keywordField.tag]
-//            query.addBulkKeywords(uniqueKeywordArr, withOption: option)
-//        }
-//        fetchVolumes(with: query)
-//    }
-    
     func fetchVolumes(with query: BookSearchQuery) {
-        BookModel.fetchVolumes(withSearchQuery: query, APIKey: GBookAPIKey) { json in
+        BookModel.fetchVolumes(withSearchQuery: query) { json in
             if let results = json["items"] as? [NSDictionary] {
                 self.tableData = []
-                
-//                let volumes = results.map() { itemResult in
-//                    return itemResult["volumeInfo"] as! NSDictionary
-//                }
                 
                 for item in results {
                     guard let book = BookModel.getBookFromJson(item) else {
                         print("CANT GET BOOK")
                         continue
                     }
-//                    let book = Book()
-//                    book.title = (volume["title"] as? String) ?? ""
-//                    book.authors = (volume["authors"] as? [String]) ?? []
-//
-//                    guard let imageLinks = volume["imageLinks"] as? NSDictionary else { continue }
-//                    guard let smallThumbnail = imageLinks["smallThumbnail"] as? String else { continue }
-//                    book.thumbnailImageName = smallThumbnail.replacingOccurrences(of: "&edge=curl", with: "")
                     self.tableData.append(book)
                 }
             }

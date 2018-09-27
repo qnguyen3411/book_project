@@ -24,7 +24,8 @@
 		E339B68921530D7400308CA2 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E339B68821530D7400308CA2 /* Extensions.swift */; };
 		E339B68B21531EBE00308CA2 /* SearchVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = E339B68A21531EBE00308CA2 /* SearchVC.swift */; };
 		E339B6912153276B00308CA2 /* BookCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E339B6902153276B00308CA2 /* BookCell.swift */; };
-		E3FAD5C5215A9D4300106FDD /* ChartElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3FAD5C1215A9D4200106FDD /* ChartElement.swift */; };
+		E3D50DBF215C7A960059475F /* AppUrls.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D50DBE215C7A960059475F /* AppUrls.swift */; };
+		E3D50DC3215C7EE60059475F /* ChartElementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D50DC2215C7EE60059475F /* ChartElementView.swift */; };
 		E3FAD5C6215A9D4300106FDD /* ChartLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3FAD5C2215A9D4200106FDD /* ChartLink.swift */; };
 		E3FAD5C8215A9D4300106FDD /* TouchTrackingButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3FAD5C4215A9D4300106FDD /* TouchTrackingButton.swift */; };
 		E3FAD5CA215A9DCA00106FDD /* EditorVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3FAD5C9215A9DCA00106FDD /* EditorVC.swift */; };
@@ -78,7 +79,8 @@
 		E339B68821530D7400308CA2 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		E339B68A21531EBE00308CA2 /* SearchVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchVC.swift; sourceTree = "<group>"; };
 		E339B6902153276B00308CA2 /* BookCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookCell.swift; sourceTree = "<group>"; };
-		E3FAD5C1215A9D4200106FDD /* ChartElement.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChartElement.swift; sourceTree = "<group>"; };
+		E3D50DBE215C7A960059475F /* AppUrls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUrls.swift; sourceTree = "<group>"; };
+		E3D50DC2215C7EE60059475F /* ChartElementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartElementView.swift; sourceTree = "<group>"; };
 		E3FAD5C2215A9D4200106FDD /* ChartLink.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChartLink.swift; sourceTree = "<group>"; };
 		E3FAD5C4215A9D4300106FDD /* TouchTrackingButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TouchTrackingButton.swift; sourceTree = "<group>"; };
 		E3FAD5C9215A9DCA00106FDD /* EditorVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditorVC.swift; sourceTree = "<group>"; };
@@ -200,6 +202,7 @@
 			isa = PBXGroup;
 			children = (
 				E339B68821530D7400308CA2 /* Extensions.swift */,
+				E3D50DBE215C7A960059475F /* AppUrls.swift */,
 			);
 			path = Helper;
 			sourceTree = "<group>";
@@ -226,10 +229,10 @@
 		E3FAD5CD215AB47500106FDD /* EditorViews */ = {
 			isa = PBXGroup;
 			children = (
-				E3FAD5C1215A9D4200106FDD /* ChartElement.swift */,
 				E3FAD5CB215AA33000106FDD /* ElementOptionMenu.swift */,
 				E3FAD5C2215A9D4200106FDD /* ChartLink.swift */,
 				E3FAD5C4215A9D4300106FDD /* TouchTrackingButton.swift */,
+				E3D50DC2215C7EE60059475F /* ChartElementView.swift */,
 			);
 			path = EditorViews;
 			sourceTree = "<group>";
@@ -505,13 +508,14 @@
 				E339B68B21531EBE00308CA2 /* SearchVC.swift in Sources */,
 				E339B68921530D7400308CA2 /* Extensions.swift in Sources */,
 				E3129925215A909F0039081C /* ChartCell.swift in Sources */,
-				E3FAD5C5215A9D4300106FDD /* ChartElement.swift in Sources */,
+				E3D50DC3215C7EE60059475F /* ChartElementView.swift in Sources */,
 				E3FAD5CA215A9DCA00106FDD /* EditorVC.swift in Sources */,
 				E339B65E2152D8D800308CA2 /* BookChart.xcdatamodeld in Sources */,
 				E3FAD5CF215ACE1000106FDD /* DisplayVC.swift in Sources */,
 				E339B6872152D93900308CA2 /* BookModel.swift in Sources */,
 				E3FAD5C8215A9D4300106FDD /* TouchTrackingButton.swift in Sources */,
 				E339B6562152D8D800308CA2 /* AppDelegate.swift in Sources */,
+				E3D50DBF215C7A960059475F /* AppUrls.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

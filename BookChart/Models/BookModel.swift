@@ -20,8 +20,8 @@ class Book: NSObject {
 
 class BookModel {
     
-    static func fetchVolumes(withSearchQuery query: BookSearchQuery, APIKey: String, completionHandler: @escaping (NSDictionary) -> Void) {
-        let url = URL(string: "https://www.googleapis.com/books/v1/volumes?\(query.toString())&fields=totalItems,items(id,volumeInfo(title,authors,imageLinks(smallThumbnail)))&key=\(APIKey)")
+    static func fetchVolumes(withSearchQuery query: BookSearchQuery,  completionHandler: @escaping (NSDictionary) -> Void) {
+        let url = URL(string: "https://www.googleapis.com/books/v1/volumes?\(query.toString())&fields=totalItems,items(id,volumeInfo(title,authors,imageLinks(smallThumbnail)))&key=\(AppUrls.googleBookApiKey)")
         
         print("URLSTRING: \(String(describing: url?.absoluteString))")
         
@@ -39,7 +39,7 @@ class BookModel {
         task.resume()
     }
     
-    static func fetchVolume(id:String, APIKey: String,completionHandler: @escaping (NSDictionary) -> Void) {
+    static func fetchVolume(id:String, completionHandler: @escaping (NSDictionary) -> Void) {
         let url = URL(string: "https://www.googleapis.com/books/v1/volumes/\(id)")
         let task = URLSession.shared.dataTask(with: url!) { data, response, error in
             do {
